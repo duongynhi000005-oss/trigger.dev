@@ -1,20 +1,12 @@
-import { EventFilter } from "./schemas/eventFilter.js";
+import type { EventFilter } from "./schemas/eventFilter.js";
 
 // EventFilter is a recursive type, where the keys are strings and the values are an array of strings, numbers, booleans, or objects.
 // If the values of the array are strings, numbers, or booleans, than we are matching against the value of the payload.
 // If the values of the array are objects, then we are doing content filtering
 // An example would be [{ $endsWith: ".png" }, { $startsWith: "images/" } ]
 export function eventFilterMatches(payload: any, filter: EventFilter): boolean {
-  if (payload === undefined || payload === null) {
-    if (Object.entries(filter).length === 0) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
   for (const [patternKey, patternValue] of Object.entries(filter)) {
-    const payloadValue = payload[patternKey];
+    const payloadValue = payload != null ? payload[patternKey] : undefined;
 
     if (Array.isArray(patternValue)) {
       if (patternValue.length === 0) {
